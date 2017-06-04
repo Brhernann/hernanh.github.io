@@ -9,33 +9,71 @@
  * Main module of the application.
  */
 angular
-  .module('hernanhApp', [
+
+  .module('saltalacaif', [
+
     'ngAnimate',
     'ngAria',
     'ngCookies',
     'ngMessages',
     'ngResource',
-    'ngRoute',
+    'ui.router',
     'ngSanitize',
-    'ngTouch'
+    'ngMaterial',
   ])
-  .config(function ($routeProvider,$locationProvider) {
 
-     $locationProvider.hashPrefix('');
-    $routeProvider
-      .when('/', {
-        templateUrl: 'views/main.html',
-        controller: 'MainCtrl',
-        controllerAs: 'main'
-      })
-      .when('/about', {
-        templateUrl: 'views/about.html',
-        controller: 'AboutCtrl',
-        controllerAs: 'about'
-      })
-      .otherwise({
-        redirectTo: '/'
-      });
+  .config(function ($stateProvider, $urlRouterProvider, $locationProvider) {
 
-      
+    $locationProvider.hashPrefix('');
+    $stateProvider
+      .state('inicio', {
+        url: '/',
+        templateUrl: 'views/inicio.html',
+        controller: 'InicioCtrl',
+        controllerAs: 'inicio',
+        resolve: {
+          next: function ($location) {
+            var rut = window.localStorage.getItem('rut_paciente')
+            if (rut !== null) {
+              console.log(rut);
+              $location.path('/#/medicos');
+            }
+          }
+        }
+      })
+
+      .state('config', {
+        url: '/configuracion',
+        templateUrl: 'views/configuracion.html',
+        controller: 'ConfiguracionCtrl',
+        controllerAs: 'configuracion'
+      })
+      .state('registro', {
+        url: '/registro',
+        templateUrl: 'views/registro.html',
+        controller: 'RegistroCtrl',
+        controllerAs: 'registro'
+      })
+      .state('mishoras', {
+        url: '/mishoras',
+        templateUrl: 'views/mishoras.html',
+        controller: 'MishorasCtrl',
+        controllerAs: 'mishoras'
+      })
+      .state('medicos', {
+        url: '/medicos',
+        templateUrl: 'views/medicos.html',
+        controller: 'MedicosCtrl',
+        controllerAs: 'medicos'
+      })
+      .state('horas', {
+        url: '/horas/:Profesional',
+        templateUrl: 'views/horas.html',
+        controller: 'HorasCtrl',
+        controllerAs: 'horas'
+      })
+
+    $urlRouterProvider.otherwise('/');
+
+
   });

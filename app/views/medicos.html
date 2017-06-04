@@ -1,0 +1,59 @@
+<md-toolbar>
+  <div class="md-toolbar-tools">
+    <md-button class="md-icon-button" aria-label="Settings" ng-click="toggleLeft()">
+      <md-icon md-svg-icon="images/icons/account.svg"></md-icon>
+    </md-button>
+    <h2 flex md-truncate>Reserva tu hora medica con fecha {{holidaydate}}</h2>
+
+    <md-button class="md-icon-button" aria-label="More" ng-click="refresh()">
+      <md-icon md-svg-icon="images/icons/refresh.svg"></md-icon>
+    </md-button>
+    <md-menu md-position-mode="target-right target">
+      <md-button aria-label="Open demo menu" class="md-icon-button" ng-click="$mdMenu.open($event)">
+        <md-icon md-svg-icon="images/icons/more.svg"></md-icon>
+      </md-button>
+      <md-menu-content width="4">
+        <md-menu-item>
+          <md-button ng-click="cerrarsesion()">
+            <div layout="row" flex>
+              <p flex>Cerrar sesión</p>
+              <md-icon md-menu-align-target md-svg-icon="images/icons/cerrar.svg" style="margin: auto 3px auto 0;"></md-icon>
+            </div>
+          </md-button>
+        </md-menu-item>
+      </md-menu-content>
+    </md-menu>
+  </div>
+</md-toolbar>
+
+<div class="text-center">
+  <img src="images/SaltalaCaif.png" class="logo" alt="">
+  <br><br>
+  <span>Selecciona el Médico de turno y reserva tu cupo</span>
+</div>
+<br>
+
+    <div layout="row" layout-sm="column" layout-align="center" ng-hide="ok" style="padding-top:90px;">
+      <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+    </div>
+
+<md-content class="md-padding ">
+  <div>
+    <md-card md-theme-watch ng-repeat="(key,value) in medicos track by $index" class="md-whiteframe-11dp">
+      <!--<img ng-src="images/icons/icon.png" class="md-user-avatar" alt="Washed Out">-->
+      <md-card-title>
+        <md-card-title-text>
+          <span class="md-headline">{{key}}</span>
+          <span class="md-subhead">Médico general</span>
+        </md-card-title-text>
+        <md-card-title-media>
+          <div class="md-media-sm card-media"></div>
+        </md-card-title-media>
+      </md-card-title>
+      <md-card-actions layout="row" layout-align="end center">
+        <md-button class="md-raised md-primary" ng-click="Horasmedicas(key)">Ver horas</md-button>
+      </md-card-actions>
+    </md-card>
+  </div>
+  <br>
+</md-content>

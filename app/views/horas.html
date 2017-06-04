@@ -1,0 +1,83 @@
+<md-toolbar>
+  <div class="md-toolbar-tools">
+    <md-button class="md-icon-button" aria-label="Settings" ng-click="toggleLeft()">
+      <md-icon md-svg-icon="images/icons/account.svg"></md-icon>
+    </md-button>
+    <h2 flex md-truncate>Reserva tu Cupo con el Médico <b>{{horas[0].Profesional}}</b></h2>
+
+    <md-button class="md-icon-button" aria-label="More" ng-click="refresh()">
+      <md-icon md-svg-icon="images/icons/refresh.svg"></md-icon>
+    </md-button>
+    <md-menu md-position-mode="target-right target">
+      <md-button aria-label="Open demo menu" class="md-icon-button" ng-click="$mdMenu.open($event)">
+        <md-icon md-svg-icon="images/icons/more.svg"></md-icon>
+      </md-button>
+      <md-menu-content width="4">
+        <md-menu-item>
+          <md-button ng-click="cerrarsesion()">
+            <div layout="row" flex>
+              <p flex>Cerrar sesión</p>
+              <md-icon md-menu-align-target md-svg-icon="images/icons/cerrar.svg" style="margin: auto 3px auto 0;"></md-icon>
+            </div>
+          </md-button>
+        </md-menu-item>
+      </md-menu-content>
+    </md-menu>
+  </div>
+</md-toolbar>
+
+<section layout="row" flex>
+  <md-sidenav class="md-sidenav-left" md-component-id="left" md-disable-backdrop md-whiteframe="4">
+    <md-toolbar class="md-theme-indigo">
+      <h1 class="md-toolbar-tools">Hernan Humaña</h1>
+    </md-toolbar>
+    <md-content layout-margin>
+      <p>
+        Las horas medicas que tu haz agendado las podras ver Aquí, y tambien cancelarlas.
+      </p>
+      <md-content>
+        <md-list flex>
+          <md-subheader class="md-no-sticky">Horas reservadas</md-subheader>
+          <md-list-item class="md-3-line" ng-repeat="item in horasReservadas">
+            <div class="md-list-item-text" layout="column">
+              <b><h3>Médico {{ item.profesional }}</h3></b>
+              <span>Hoy a las {{item.hora_reserva}}</span>
+             <md-button class="md-raised md-primary" ng-click="cancel($event,item)">Cancelar</md-button>
+              <md-divider></md-divider>
+            </div>
+          </md-list-item>
+          <md-divider></md-divider>
+          <md-subheader class="md-no-sticky">Horas Anteriores</md-subheader>
+          <md-list-item class="md-3-line" ng-repeat="item in horaspasadas">
+            <div class="md-list-item-text" layout="column">
+              <h3>{{ item.profesional }}</h3>
+              <span>{{item.hora_reserva}}</span>
+            </div>
+          </md-list-item>
+        </md-list>
+      </md-content>
+      <div layout="row" layout-align="center end">
+        <md-button ng-click="toggleLeft()" class="md-primary md-hue-1">
+          Salir de mis horas
+        </md-button>
+      </div>
+    </md-content>
+
+  </md-sidenav>
+
+</section>
+
+<div layout="row" layout-padding layout-wrap layout-fill ng-cloak>
+
+  <md-whiteframe ng-repeat="m in horas track by $index" class="md-whiteframe-3dp" style="height:100px;" flex-sm="45" flex-gt-sm="35"
+    flex-gt-md="25" layout layout-align="center center" ng-class="{'royal':m.Estado_Cupo == '2' || nohorario}">
+    <h4>{{m.Hora}}</h4>
+    <md-button ng-click="Horaselect($event,m)" ng-show="m.Estado_Cupo == '1'">
+      Reservar
+    </md-button>
+    <span class="md-subhead" style="padding-left: 40px;" ng-show="m.Detalle_Estado == 'Hora Ocupada' || m.Detalle_Estado == 'Bloqueado'">No disponible</span>
+    <span class="md-subhead" style="padding-left: 40px;" ng-show="m.Detalle_Estado == 'Control'">Hora control</span>
+
+
+  </md-whiteframe>
+</div>

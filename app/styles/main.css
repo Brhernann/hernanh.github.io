@@ -1,29 +1,65 @@
-
-@font-face {
-    font-family:reckoner;
-    src: url(../font/Reckoner.ttf);
+html {
+  font-family: 'Roboto';
 }
 
-body {
-  padding: 0;
-  background-color:#404040;
+.titulos {
+  color: #00b6dd;
 }
 
-.footer {
-  padding-top: 19px;
-  color: #777;
-}
-
-.jumbotron {
-  font-family:reckoner;
-  background-color:#118C4E;
-  margin-top: 30px;
+h4 {
   text-align: center;
-  border-radius: 100px;
+  color: #01314b;
+}
+.material-icons {
+  color: blue
+  }
+
+
+.input {
+  border-radius: 10px;
+  border: 1px solid black;
 }
 
+.logo {
+  padding-top: 60px;
+  width: 300px;
+}
+
+.botones {
+  border-radius: 10px;
+  padding: 0px 20px 0px 20px;
+}
+
+
+.letramedicos {
+  letter-spacing: 1.2px;
+  color: #004266;
+}
+
+.item {
+  border-style: none;
+  color: #004266;
+}
+
+a.item {
+  border-bottom: 2px solid #b2b2b2;
+  color: #545353 !important;
+}
+
+
+.royal {
+  background-color: #b2b2b2;
+}
+
+
+.linea {
+  border-bottom: 2px solid #c7c7c7;
+}
+
+.botones {
+  padding: 0px 10px 0px 10px;
+}
 
 /* Responsive: Portrait tablets and up */
-@media screen and (min-width: 768px) {
 
-}
+@media screen and (min-width: 768px) {}

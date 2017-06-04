@@ -1,0 +1,96 @@
+<div class="text-center">
+  <img src="images/SaltalaCaif.png" class="logo" alt="">
+  <br><br>
+  <h5>Bienvenido a saltala caif, tu rut de registro es {{user.rut}}</h5>
+</div>
+<br>
+
+<md-content layout-padding  class="md-no-momentum md-whiteframe-11dp">
+  <form name="userForm">
+    <div layout="row" layout-xs="column" layout-sm="column" layout-align="space-between center">
+      <div flex-gt-sm="80">
+          <!--<h4>Completa tu registro para poder ingresar y usar Saltala caif</h4>-->
+      </div>
+
+    </div>
+
+    <div layout-gt-sm="row">
+
+      <md-input-container class="md-block" flex-gt-sm>
+        <label>Nombre</label>
+        <input required name="nombre" type="text" ng-model="user.nombre" />
+         <div ng-messages="userForm.nombre.$error">
+          <div ng-message="required">Nombre no puede estar vacio.</div>
+        </div>
+      </md-input-container>
+
+      <div flex="5" hide-xs hide-sm>
+        <!-- Spacer //-->
+      </div>
+
+      <md-input-container class="md-block" flex-gt-sm>
+        <label>Apellido</label>
+        <input required name="apellido" type="text" ng-model="user.apellido"/>
+        <div ng-messages="userForm.apellido.$error">
+          <div ng-message="required">Apellido no puede estar vacio.</div>
+        </div>
+      </md-input-container>
+
+    </div>
+
+    <div layout-gt-sm="row">
+
+      <md-input-container class="md-block" flex-gt-sm>
+        <label>Email</label>
+        <input required name="email" ng-model="user.email" type="mail" ng-pattern="/^.+@.+\..+$/" />
+        <div ng-messages="userForm.email.$error">
+          <div ng-message="required">Email no puede estar vacio.</div>
+          <div ng-message="pattern">Email invalido.</div>          
+        </div>
+      </md-input-container>
+
+      <div flex="5" hide-xs hide-sm>
+        <!-- Spacer //-->
+      </div>
+
+      <md-input-container class="md-block" flex-gt-sm>
+        <label>Departamento</label>
+        <input required name="departamento" type="text" ng-model="user.departamento" />
+        <div ng-messages="userForm.departamento.$error">
+          <div ng-message="required">Departamento no puede estar vacio.</div>
+        </div>
+      </md-input-container>
+
+    </div>
+
+        <div layout-gt-sm="row">
+
+      <md-input-container class="md-block" flex-gt-sm>
+        <label>Contraseña</label>
+        <input required name="pass" type="password" data-ng-model="user.pass"  ng-minlength="6"/>
+        <div ng-messages="userForm.pass.$error">
+          <div ng-message="required">La contraseña no puede estar vacia.</div>
+          <div ng-message="minlength">La contraseña tiene que tener al menos 6 caracteres.</div>
+        </div>
+      </md-input-container>
+
+      <div flex="5" hide-xs hide-sm>
+        <!-- Spacer //-->
+      </div>
+
+      <md-input-container class="md-block" flex-gt-sm>
+        <label>Verificar contraseña</label>
+        <input required name="verifypass"  type="password" ng-model="user.verifypass" data-password-verify="user.pass"/>
+        <div ng-messages="userForm.verifypass.$error">
+          <div ng-message="required">Este campo es requerido.</div>
+          <div ng-message="passwordVerify">La contraseña no coincide</div>
+        </div>
+      </md-input-container>
+
+    </div>
+  </form>
+  <br>
+  <div layout="row" layout-align="center center">
+      <md-button class="md-raised md-primary" ng-disabled="userForm.$invalid" ng-click="sesion($event,user)">{{texto}}</md-button>
+</div>
+</md-content>

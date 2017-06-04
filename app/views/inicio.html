@@ -1,0 +1,26 @@
+<div class="text-center">
+  <img src="images/SaltalaCaif.png" class="logo" alt="">
+  <br>
+  <span>Bienvenido a saltala caif</span>
+</div>
+<br>
+<div layout="row" layout-align="center none"><h4>Inicia sesión para poder tomar horas medicas</h4></div>
+<div layout="row" layout-align="center none" layout-padding ng-cloak>
+  <br/>
+  <md-content class="md-no-momentum md-whiteframe-11dp" style="width:600px;">
+    <md-input-container md-no-float class="md-block">
+      <md-icon md-svg-src="images/icons/mail.svg"></md-icon>
+      <input ng-model="user.email" type="text" placeholder="Rut o Email">
+    </md-input-container>
+
+    <md-input-container md-no-float class="md-block">
+      <md-icon md-svg-src="images/icons/key.svg"></md-icon>
+      <input ng-model="user.pass" type="password" placeholder="Contraseña">
+    </md-input-container>
+
+    <md-button class="md-raised md-primary" ng-click="sesion($event,user)">Entrar</md-button>
+    <md-button md-no-ink class="md-primary" ng-click="registrar($event)">Registrate</md-button>
+  </md-content>
+</div>
+<div layout="row" layout-align="center none"><md-button md-no-ink class="md-primary" ng-click="recoverypass($event)">¿Ha olvidado la contraseña?</md-button></div>
+
