@@ -2,6 +2,9 @@ html {
   font-family: 'Roboto';
 }
 
+.mfb-component__button--main {
+background-color: #00b6dd;
+}
 .titulos {
   color: #00b6dd;
 }
@@ -10,6 +13,10 @@ h4 {
   text-align: center;
   color: #01314b;
 }
+.royal {
+  background-color: #b2b2b2;
+}
+
 .material-icons {
   color: blue
   }
@@ -45,12 +52,6 @@ a.item {
   border-bottom: 2px solid #b2b2b2;
   color: #545353 !important;
 }
-
-
-.royal {
-  background-color: #b2b2b2;
-}
-
 
 .linea {
   border-bottom: 2px solid #c7c7c7;

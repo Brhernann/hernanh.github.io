@@ -15,7 +15,8 @@
     "angular-ui-router": "^1.0.3",
     "firebase": "^4.1.0",
     "angular-material": "^1.1.4",
-    "lodash": "^4.17.4"
+    "lodash": "^4.17.4",
+    "ng-material-floating-button": "ng-mfb#^0.6.2"
   },
   "devDependencies": {
     "angular-mocks": "^1.4.0"

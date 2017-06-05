@@ -13,7 +13,7 @@
         <md-icon md-svg-icon="images/icons/more.svg"></md-icon>
       </md-button>
       <md-menu-content width="4">
-        <md-menu-item>
+        <md-menu-item> 
           <md-button ng-click="cerrarsesion()">
             <div layout="row" flex>
               <p flex>Cerrar sesión</p>
@@ -25,6 +25,49 @@
     </md-menu>
   </div>
 </md-toolbar>
+
+<section layout="row" flex>
+  <md-sidenav class="md-sidenav-left" md-component-id="left" md-disable-backdrop md-whiteframe="4">
+    <md-toolbar class="md-theme-indigo">
+      <h1 class="md-toolbar-tools" ng-click="lala()">{{usuario.nombre}}</h1>
+    </md-toolbar>
+    <md-content layout-margin>
+      <p>
+        Las horas medicas que tu haz agendado las podras ver Aquí, y tambien cancelarlas.
+      </p>
+      <md-content>
+        <md-list flex>
+          <md-subheader class="md-no-sticky">Horas reservadas</md-subheader>
+          <span ng-hide="nohayhoras" class="small"><b>No tiene horas agendadas</b></span>
+          <br>  
+          <md-list-item class="md-3-line" ng-repeat="item in horasReservadas">
+            <div class="md-list-item-text" layout="column">
+              <b><h3>Médico {{ item.profesional }}</h3></b>
+              <span>Hoy a las {{item.hora_reserva}}</span>
+             <md-button class="md-raised md-primary" ng-click="cancel($event,item)">Cancelar</md-button>
+              <md-divider></md-divider>
+            </div>
+          </md-list-item>
+          <md-divider></md-divider>
+          <md-subheader class="md-no-sticky">Horas Anteriores</md-subheader>
+          <md-list-item class="md-3-line" ng-repeat="item in horaspasadas">
+            <div class="md-list-item-text" layout="column">
+              <h3>{{ item.profesional }}</h3>
+              <span>{{item.hora_reserva}}</span>
+            </div>
+          </md-list-item>
+        </md-list>
+      </md-content>
+      <div layout="row" layout-align="center end">
+        <md-button ng-click="toggleLeft()" class="md-primary md-hue-1">
+          Salir de mis horas
+        </md-button>
+      </div>
+    </md-content>
+
+  </md-sidenav>
+
+</section>
 
 <div class="text-center">
   <img src="images/SaltalaCaif.png" class="logo" alt="">

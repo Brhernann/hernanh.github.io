@@ -96,6 +96,7 @@ angular.module('saltalacaif')
   return movil;
 })
 
+
   .factory('tools', function () {
 
       return {
@@ -108,7 +109,7 @@ angular.module('saltalacaif')
     })
 
 
-    .factory('datosusuario', function ($q) {
+ .factory('datosusuario', function ($q) {
 
       var datouser = {};
 
@@ -140,7 +141,7 @@ angular.module('saltalacaif')
       }
     })
 
-      .service('horasmedicas', horasmedicas)
+    .service('horasmedicas', horasmedicas)
       
     .service('Pulsomovil', function ($resource, $httpParamSerializerJQLike) {
       var service = $resource('http://nodeproyects-dev.us-west-2.elasticbeanstalk.com/webservices/:action', null,
@@ -261,6 +262,5 @@ angular.module('saltalacaif')
         return self
 
       }
-
 
 

@@ -20,7 +20,9 @@ angular
     'ui.router',
     'ngSanitize',
     'ngMaterial',
+    'ng-mfb'
   ])
+
 
   .config(function ($stateProvider, $urlRouterProvider, $locationProvider) {
 
@@ -34,9 +36,9 @@ angular
         resolve: {
           next: function ($location) {
             var rut = window.localStorage.getItem('rut_paciente')
-            if (rut !== null) {
+            if (rut != undefined) {
               console.log(rut);
-              $location.path('/#/medicos');
+              $location.path('/medicos');
             }
           }
         }
@@ -47,30 +49,64 @@ angular
         templateUrl: 'views/configuracion.html',
         controller: 'ConfiguracionCtrl',
         controllerAs: 'configuracion'
+
       })
+
+
       .state('registro', {
         url: '/registro',
         templateUrl: 'views/registro.html',
         controller: 'RegistroCtrl',
-        controllerAs: 'registro'
+        controllerAs: 'registro',
+        resolve: {
+          next: function ($location) {
+            var rut = window.localStorage.getItem('rut_paciente')
+            if (rut == undefined) {
+              console.log(rut);
+              $location.path('/inicio');
+            }
+          }
+        }
+
       })
+
+      // en veremos si usar o no
       .state('mishoras', {
         url: '/mishoras',
         templateUrl: 'views/mishoras.html',
         controller: 'MishorasCtrl',
         controllerAs: 'mishoras'
+
       })
       .state('medicos', {
         url: '/medicos',
         templateUrl: 'views/medicos.html',
         controller: 'MedicosCtrl',
-        controllerAs: 'medicos'
+        controllerAs: 'medicos',
+        resolve: {
+          next: function ($location) {
+            var rut = window.localStorage.getItem('rut_paciente')
+            if (rut == undefined) {
+              console.log(rut);
+              $location.path('/inicio');
+            }
+          }
+        }
       })
       .state('horas', {
         url: '/horas/:Profesional',
         templateUrl: 'views/horas.html',
         controller: 'HorasCtrl',
-        controllerAs: 'horas'
+        controllerAs: 'horas',
+        resolve: {
+          next: function ($location) {
+            var rut = window.localStorage.getItem('rut_paciente')
+            if (rut == undefined) {
+              console.log(rut);
+              $location.path('/inicio');
+            }
+          }
+        }
       })
 
     $urlRouterProvider.otherwise('/');

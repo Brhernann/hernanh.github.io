@@ -25,11 +25,16 @@
     </md-menu>
   </div>
 </md-toolbar>
+<div class="text-center">
+  <img src="images/SaltalaCaif.png" class="logo" alt="">
+  <br><br>
+  <span>Reserva tu hora médica seleccionando en el recuadro de abajo.</span>
+</div>
 
 <section layout="row" flex>
   <md-sidenav class="md-sidenav-left" md-component-id="left" md-disable-backdrop md-whiteframe="4">
     <md-toolbar class="md-theme-indigo">
-      <h1 class="md-toolbar-tools">Hernan Humaña</h1>
+      <h1 class="md-toolbar-tools">{{usuario.nombre}}</h1>
     </md-toolbar>
     <md-content layout-margin>
       <p>
@@ -38,7 +43,9 @@
       <md-content>
         <md-list flex>
           <md-subheader class="md-no-sticky">Horas reservadas</md-subheader>
-          <md-list-item class="md-3-line" ng-repeat="item in horasReservadas">
+          <span ng-hide="nohayhoras" class="small"><b>No tiene horas agendadas</b></span>
+          <br>  
+          <md-list-item class="md-3-line" ng-repeat="item in horasReservadas">  
             <div class="md-list-item-text" layout="column">
               <b><h3>Médico {{ item.profesional }}</h3></b>
               <span>Hoy a las {{item.hora_reserva}}</span>
@@ -81,3 +88,9 @@
 
   </md-whiteframe>
 </div>
+
+<br><br>
+
+<nav mfb-menu position="br" effect="zoomin" label="volver a Médicos" active-icon="ion-chevron-left" resting-icon="ion-chevron-left" toggling-method="hover" main-action="goback()">
+
+</nav>

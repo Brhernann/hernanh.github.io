@@ -9,16 +9,50 @@
  */
 angular.module('saltalacaif')
 
+
   .controller('HorasCtrl', function ($q, $scope, $rootScope, $state, horasmedicas, tools, $mdDialog, Pulsomovil, $mdSidenav, $timeout, Movil) {
 
+    $scope.goback = function () {
+      $state.go('medicos');
+    }
     var rut_paciente = window.localStorage.getItem('rut_paciente');
     $scope.imagePath = 'images/icons/icon.png';
     $scope.toggleLeft = buildToggler('left');
     $scope.toggleRight = buildToggler('right');
+    $scope.nohayhoras = false;
 
     function buildToggler(componentId) {
       return function () {
-              console.log(componentId);
+        $scope.horasReservadas = [];
+        $scope.horaspasadas = [];
+
+        Movil.Datospaciente({
+          rut_paciente: rut_paciente
+        }, function (resp) {
+          $scope.usuario = resp;
+          console.log($scope.usuario);
+        });
+
+        Movil.VerHorasMedicas({
+          rut_paciente: rut_paciente
+        }, function (res) {
+          console.log(res);
+          for (var i = 0; i < res.length; i++) {
+            if (res[i].estado === '1') {
+              $scope.horasReservadas.push(res[i]);
+            }
+
+            if (res[i].estado === '2') {
+              $scope.horaspasadas.push(res[i]);
+            }
+
+            if (res[i].estado !== '1') {
+              $scope.nohayhoras = true;
+            }
+
+          }
+        });
+        console.log(componentId);
         $mdSidenav(componentId).toggle();
       };
     }
@@ -42,7 +76,9 @@ angular.module('saltalacaif')
     }
     horas()
 
-    $scope.refresh = horas();
+    $scope.refresh = function () {
+      horas();
+    }
     $scope.$on($scope.horas, function (change) {
       console.log(change)
     })
@@ -57,7 +93,7 @@ angular.module('saltalacaif')
       console.log('new rut', rutparce);
       console.log(h);
       var confirm = $mdDialog.confirm()
-        .title('Confirma tu hora con ' + h.Profesional)
+        .title('Confirma tu hora médica con ' + h.Profesional)
         .textContent('Hoy a las ' + h.Hora + ' con el Médico ' + h.Profesional)
         .ariaLabel('Lucky day')
         .targetEvent(ev)
@@ -82,8 +118,8 @@ angular.module('saltalacaif')
               $mdDialog.alert()
               .parent(angular.element(document.querySelector('#popupContainer')))
               .clickOutsideToClose(true)
-              .title('Hora agendada con exito')
-              .textContent('Recuerda llegar al menos 15 minutos antes')
+              .title('Hora agendada con éxito')
+              .textContent('Recuerda llegar al menos 15 minutos a7ntes')
               .ariaLabel('No encontrado')
               .ok('Entendido!')
               .targetEvent(ev)
@@ -100,6 +136,7 @@ angular.module('saltalacaif')
 
             }, function (res) {
               console.log(11, res);
+              horas();
             });
 
 
@@ -169,26 +206,6 @@ angular.module('saltalacaif')
       });
       //   }
     }
-
-    $scope.horasReservadas = [];
-    $scope.horaspasadas = [];
-
-    Movil.VerHorasMedicas({
-      rut_paciente: rut_paciente
-    }, function (res) {
-      console.log(res);
-      for (var i = 0; i < res.length; i++) {
-        if (res[i].estado === '1') {
-          $scope.horasReservadas.push(res[i]);
-        }
-
-        if (res[i].estado === '2') {
-          $scope.horaspasadas.push(res[i]);
-        }
-
-      }
-    });
-
 
     $scope.cancel = function (ev, item) {
 
