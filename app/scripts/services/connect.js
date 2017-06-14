@@ -4,7 +4,7 @@
 angular.module('saltalacaif')
 
 .service('Movil', function($resource, $httpParamSerializerJQLike) {
-                        
+
   var movil = $resource('http://alafila.cl/Chincol/ChincolCtrl/:action', null,
     {
 
@@ -66,7 +66,7 @@ angular.module('saltalacaif')
                   headers : {"Content-Type": "application/x-www-form-urlencoded"},
                   transformRequest: function(data) {
                   return $httpParamSerializerJQLike(data);
-              }} ,             
+              }} ,
   'userrut': { method:'POST',
                   params: { action : 'enterut' },
                   headers : {"Content-Type": "application/x-www-form-urlencoded"},
@@ -78,7 +78,7 @@ angular.module('saltalacaif')
                   headers : {"Content-Type": "application/x-www-form-urlencoded"},
                   transformRequest: function(data) {
                   return $httpParamSerializerJQLike(data);
-              }} ,                 
+              }} ,
   'getversion': { method:'POST',
                   params: { action : 'CurrentVersion' },
                   headers : {"Content-Type": "application/x-www-form-urlencoded"},
@@ -90,7 +90,31 @@ angular.module('saltalacaif')
                   headers : {"Content-Type": "application/x-www-form-urlencoded"},
                   transformRequest: function(data) {
                   return $httpParamSerializerJQLike(data);
-              }}  ,              
+                }}  ,
+    'getHash': { method:'POST',
+                    params: { action : 'getHash' },
+                    headers : {"Content-Type": "application/x-www-form-urlencoded"},
+                    transformRequest: function(data) {
+                    return $httpParamSerializerJQLike(data);
+                }}  ,
+    'siexiste': { method:'POST',
+                    params: { action : 'siexiste' },
+                    headers : {"Content-Type": "application/x-www-form-urlencoded"},
+                    transformRequest: function(data) {
+                    return $httpParamSerializerJQLike(data);
+                }}  ,
+   'updatenewpass': { method:'POST',
+                   params: { action : 'updatenewpass' },
+                   headers : {"Content-Type": "application/x-www-form-urlencoded"},
+                   transformRequest: function(data) {
+                   return $httpParamSerializerJQLike(data);
+               }}  ,
+  'fechactual': { method:'POST',
+                 params: { action : 'quehoraes' },
+                 headers : {"Content-Type": "application/x-www-form-urlencoded"},
+                 transformRequest: function(data) {
+                 return $httpParamSerializerJQLike(data);
+             }}  ,
     });
 
   return movil;
@@ -142,7 +166,7 @@ angular.module('saltalacaif')
     })
 
     .service('horasmedicas', horasmedicas)
-      
+
     .service('Pulsomovil', function ($resource, $httpParamSerializerJQLike) {
       var service = $resource('http://nodeproyects-dev.us-west-2.elasticbeanstalk.com/webservices/:action', null,
         //    var service = $resource('http://localhost:8081/webservices/:action', null,
@@ -150,7 +174,7 @@ angular.module('saltalacaif')
           'ws_admision': {
             method: 'POST',
             params: {
-    
+
               action: 'Consultacupo'
             },
             headers: {
@@ -229,21 +253,23 @@ angular.module('saltalacaif')
 
 
 
-      function horasmedicas($q, Pulsomovil) {
+      function horasmedicas($q, Pulsomovil,Movil) {
 
+        Movil.fechactual({},function(res){
+        var fecha = localStorage.setItem('hora',res.fecha);
+        })
+        var fechasend = localStorage.getItem('hora');
+        console.log(3434,fechasend);
         var self = this
-
         self.medicos = []
-
         self.horamedica = []
-
         const getMedicos = () => {
 
           return Pulsomovil.ws_admision({
 
             Clave: "8TGXJDKCUQRJKUGTAAW0",
             pAgenda: 170,
-            pFecha: '2017/06/06', //fechasend,
+            pFecha: fechasend,
             pTipoProfesional: 1
 
           }, function (res) {
@@ -262,5 +288,3 @@ angular.module('saltalacaif')
         return self
 
       }
-
-

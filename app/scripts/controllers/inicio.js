@@ -9,89 +9,112 @@
  */
 angular.module('saltalacaif')
 
-  .controller('InicioCtrl', function ($scope, $mdDialog, Movil, datosusuario, $state, $timeout,$rootScope) {
+  .controller('InicioCtrl', function($scope, $mdDialog, Movil, datosusuario, $state, $timeout, $rootScope, $crypto) {
 
-    $scope.sesion = function (ev, user) {
 
+    $scope.sesion = function(ev, user) {
+      console.log(222, user);
       if (user.email.indexOf("@") == -1) {
-        Movil.userrut({
-          rut: user.email,
-          token: user.pass
-        }, function (resp) {
-          var resq = resp.problem;
-          console.log(resq);
-          console.log(resp.rut);
-          if (resq == undefined) {
-            var rut = resp.rut;
-            window.localStorage.setItem('rut_paciente', rut);
-            $timeout(function () {
-              // $ionicLoading.hide();
-              $state.go('medicos', {
-                reload: true
-              })
-            }, 2000);
-            //fin loading
-
+        // si lo que ingreso es distinto a email (RUT), agrego el nuevo login:
+        Movil.getHash({
+          rut: user.email
+        }, function(res) {
+          var hash = res.pass_user
+          console.log(hash);
+          if (hash == undefined) {
+            $scope.invalidmessage = 'Verifique sus datos ingresados.';
           } else {
-            $mdDialog.show(
-              $mdDialog.alert()
-              .parent(angular.element(document.querySelector('#popupContainer')))
-              .clickOutsideToClose(true)
-              .title('Datos incorrectos')
-              .textContent('Verifique nuevamente su rut y contraseña..')
-              .ariaLabel('No encontrado')
-              .ok('Entendido!')
-              .targetEvent(ev)
-            );
+            var decrypted = $crypto.decrypt(hash);
+            if (user.pass == decrypted) { // comparo credenciales
+              var rut = user.email
+              window.localStorage.setItem('rut_paciente', rut);
+              $state.go('medicos', {}, {
+                reload: true
+              });
 
+            } else { // si es distinta, es decir si el hash que trae es antiguo proceso con el login antiguo.
+              // 1 uid
+              // 2 bad password
+              // 3 valido
+              Movil.userrut({
+                rut: user.email,
+                token: user.pass
+              }, function(resp) {
+                if (resp.cod == '2') {
+
+                  // Existen dos posibilidades: que realmente no exista o que  si pero aún no integro el correo
+                  $scope.invalidmessage = 'Verifique sus datos ingresados.';
+                  //cuando inicie sesion con email cambio el uid por el password hasheado,
+                  //la proxima vez que inicie sesion podre hacerlo con rut como con email pasando por la primera condicion
+                  //"la validacion de desencriptacion"
+                } else {
+
+                  //cambio su contraseña por una hasheada
+                  var encrypted = $crypto.encrypt(pass); //encripto la pass
+                  Movil.updatenewpass({ //  y la actualizo en la base de datos cada vez que inicie sesion!
+                    rut: user.email,
+                    token: encrypted
+                  }, function(res) {
+
+                    rut = user.email
+                    window.localStorage.setItem('rut_paciente', rut);
+                    //ionic loading
+                    $state.go('medicos', {}, {
+                      reload: true
+                    });
+                  })
+                }
+              });
+            }
           }
-        })
+        });
+
       } else {
+        $scope.invaliditem = true;
+        var mail = user.email
+        firebase.auth().signInWithEmailAndPassword(mail, user.pass).then(function(firebaseUser) {
 
-        firebase.auth().signInWithEmailAndPassword(user.email, user.pass).then(function (firebaseUser) {
           var user = firebase.auth().currentUser;
-          var uid;
-          // var token;
-          if (user != null) {
-            uid = user.uid;
+          if (user != null) { //si el usuario existe, su sesion fue valida por lo cual,
+            //esto se ha definido para reparar a las personas que tienen registrado el email pero no la cuenta (personas con undefined)
+            Movil.siexiste({
+              mail: mail
+            }, function(response) {
+              if (response.rut == undefined) { //si existe el email que es unico paso al else
 
-            Movil.tokenpaciente({
-              token: uid
-            }, function (response) {
-              console.log(response.rut);
-
-              if (response.rut == undefined) {
                 console.log('respuesta nula');
-
                 var confirm = $mdDialog.prompt()
                   .title('Estamos Mejorando tu experiencia de usuario!.')
                   .textContent('Estimado usuario, Estámos haciendo cambios importantes para mejorar tu experiencia, necesitamos que te vuelvas a registrar.')
                   .targetEvent(ev)
                   .ok('Seguir')
 
-                $mdDialog.show(confirm).then(function (result) {
+                $mdDialog.show(confirm).then(function(result) {
                   $scope.registrar()
-                }, function () {
+                }, function() {
                   console.log('nada');
                 });
+              } else { //por lo cual, inicio sesion perfectamente: y cambio el pass al nuevo
 
+                var encrypted = $crypto.encrypt(pass); //encripto la pass
+                Movil.updatenewpass({ //  y la actualizo en la base de datos cada vez que inicie sesion!
+                  rut: response.rut,
+                  token: encrypted
+                }, function(res) {
 
-              } else {
-                var rut = response.rut
-                window.localStorage.setItem('rut_paciente', rut);
+                  rut = response.rut
+                  window.localStorage.setItem('rut_paciente', rut);
+                  $state.go('tab.Reserva', {}, {
+                    reload: true
+                  });
 
-                $state.go('medicos', {}, {
-                  reload: true
-                });
-
-
+                })
               }
-              //fin loading
 
             });
           }
 
-        }, function (error) {
+        }, function(error) {
           //tenemos "auth/invalid-email" - "auth/user-not-found" - "auth/wrong-password" - "auth/too-many-requests"
           $scope.invalid = true;
           console.log(error.code)
@@ -113,7 +136,7 @@ angular.module('saltalacaif')
       }
     };
 
-    $scope.registrar = function (ev) {
+    $scope.registrar = function(ev) {
       var confirm = $mdDialog.prompt()
         .title('Bienvenido a Saltala caif!')
         .textContent('Ingresa tu rut para poder registrarte.')
@@ -123,7 +146,7 @@ angular.module('saltalacaif')
         .ok('Seguir')
         .cancel('Cancelar');
 
-      $mdDialog.show(confirm).then(function (result) {
+      $mdDialog.show(confirm).then(function(result) {
 
         if (result == undefined) {
           $scope.status = 'no haz ingresado nada en el campo';
@@ -131,9 +154,9 @@ angular.module('saltalacaif')
           $scope.status = 'Tu rut es: ' + result;
           Movil.posibleusuario({
             rut: result
-          }, function (response) {
+          }, function(response) {
             var cod = response.cod;
-            console.log('response?',response);
+            console.log('response?', response);
             if (cod == "2") {
               $mdDialog.show(
                 $mdDialog.alert()
@@ -151,13 +174,15 @@ angular.module('saltalacaif')
 
               Movil.Datospaciente({
                 rut_paciente: response.rut
-              }, function (res) {
+              }, function(res) {
                 console.log('datos del paciente: ', res, 'codigo: ', res.cod);
 
                 if (res.cod == "2") {
                   datosusuario.setData(response);
-                  localStorage.setItem('user',JSON.stringify(response))
-                  $state.go('registro', {reload: true})
+                  localStorage.setItem('user', JSON.stringify(response))
+                  $state.go('registro', {
+                    reload: true
+                  })
                 } else {
                   $mdDialog.show(
                     $mdDialog.alert()
@@ -176,13 +201,13 @@ angular.module('saltalacaif')
           });
         }
         console.log($scope.status);
-      }, function () {
+      }, function() {
         $scope.status = 'Has cancelado el proceso.';
         console.log($scope.status);
       });
     };
 
-    $scope.recoverypass = function (ev) {
+    $scope.recoverypass = function(ev) {
 
       var confirm = $mdDialog.prompt()
         .title('¿Se te olvidó tu contraseña?')
@@ -194,7 +219,7 @@ angular.module('saltalacaif')
         .ok('Enviar')
         .cancel('Cancelar');
 
-      $mdDialog.show(confirm).then(function (result) {
+      $mdDialog.show(confirm).then(function(result) {
         if (result == undefined) {
           $scope.status = 'no haz ingresado ningun dato.';
           console.log($scope.status);
@@ -203,7 +228,7 @@ angular.module('saltalacaif')
           var auth = firebase.auth();
           var emailAddress = result;
 
-          auth.sendPasswordResetEmail(emailAddress).then(function () {
+          auth.sendPasswordResetEmail(emailAddress).then(function() {
             $mdDialog.show(
               $mdDialog.alert()
               .parent(angular.element(document.querySelector('#popupContainer')))
@@ -214,7 +239,7 @@ angular.module('saltalacaif')
               .ok('Lo entiendo.')
               .targetEvent(ev)
             );
-          }, function (error) {
+          }, function(error) {
             $mdDialog.show(
               $mdDialog.alert()
               .parent(angular.element(document.querySelector('#popupContainer')))
@@ -228,7 +253,7 @@ angular.module('saltalacaif')
 
           });
         }
-      }, function () {
+      }, function() {
         $scope.status = 'Has cancelado el proceso.';
         console.log($scope.status);
       });

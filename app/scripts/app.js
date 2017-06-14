@@ -20,9 +20,13 @@ angular
     'ui.router',
     'ngSanitize',
     'ngMaterial',
-    'ng-mfb'
+    'ng-mfb',
+    'mdo-angular-cryptography'
   ])
 
+  .config(['$cryptoProvider', function($cryptoProvider) {
+    $cryptoProvider.setCryptographyKey('SALTALA');
+  }])
 
   .config(function ($stateProvider, $urlRouterProvider, $locationProvider) {
 
@@ -51,7 +55,6 @@ angular
         controllerAs: 'configuracion'
 
       })
-
 
       .state('registro', {
         url: '/registro',

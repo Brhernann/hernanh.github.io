@@ -85,9 +85,9 @@ angular.module('saltalacaif')
 
     $scope.Horaselect = function (ev, h) {
       var hora = tools.calcularhora(h.Hora)
-      // if (hora < new Date(Date())) {
-      //   console.log('pasada');
-      // } else {
+      if (hora < new Date(Date())) {
+        console.log('pasada');
+      } else {
       console.log('rut', rut_paciente);
       var rutparce = rut_paciente.split('-')[0]
       console.log('new rut', rutparce);
@@ -119,7 +119,7 @@ angular.module('saltalacaif')
               .parent(angular.element(document.querySelector('#popupContainer')))
               .clickOutsideToClose(true)
               .title('Hora agendada con éxito')
-              .textContent('Recuerda llegar al menos 15 minutos a7ntes')
+              .textContent('Recuerda llegar al menos 15 minutos antes')
               .ariaLabel('No encontrado')
               .ok('Entendido!')
               .targetEvent(ev)
@@ -194,7 +194,7 @@ angular.module('saltalacaif')
               .parent(angular.element(document.querySelector('#popupContainer')))
               .clickOutsideToClose(true)
               .title('Agenda no habilitada.')
-              .textContent('Lo sentimos, la agenda seleccionada no está habilitada para reservar cupo.')
+              .textContent('Lo sentimos, error no controlado.')
               .ariaLabel('No encontrado')
               .ok('Lo entiendo!')
               .targetEvent(ev)
@@ -204,7 +204,7 @@ angular.module('saltalacaif')
       }, function () {
         console.log('cancelaste.');
       });
-      //   }
+        }
     }
 
     $scope.cancel = function (ev, item) {
@@ -256,7 +256,7 @@ angular.module('saltalacaif')
               .parent(angular.element(document.querySelector('#popupContainer')))
               .clickOutsideToClose(true)
               .title('No autorizado.')
-              .textContent('La agenda seleccionada no está habilitada para anular cupo.')
+              .textContent('Problemas con su cuenta, vuelva a inicar sesión.')
               .ariaLabel('No encontrado')
               .ok('Lo entiendo!')
               .targetEvent(ev)
