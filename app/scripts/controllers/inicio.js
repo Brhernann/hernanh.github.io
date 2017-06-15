@@ -10,23 +10,27 @@
 angular.module('saltalacaif')
 
   .controller('InicioCtrl', function($scope, $mdDialog, Movil, datosusuario, $state, $timeout, $rootScope, $crypto) {
+    $scope.sesion = function(ev, USER) {
+      //
 
-
-    $scope.sesion = function(ev, user) {
-      console.log(222, user);
-      if (user.email.indexOf("@") == -1) {
+      console.log(`Ingresando con :${(USER.email.indexOf("@") == -1)? 'Rut' : 'Email'}`);
+      if (USER.email.indexOf("@") == -1) {
         // si lo que ingreso es distinto a email (RUT), agrego el nuevo login:
         Movil.getHash({
-          rut: user.email
+          rut: USER.email
         }, function(res) {
           var hash = res.pass_user
-          console.log(hash);
+
           if (hash == undefined) {
+
             $scope.invalidmessage = 'Verifique sus datos ingresados.';
+
           } else {
-            var decrypted = $crypto.decrypt(hash);
-            if (user.pass == decrypted) { // comparo credenciales
-              var rut = user.email
+
+            var decrypted = $crypto.decrypt(hash).toString();
+
+            if (USER.pass == decrypted) { // comparo credenciales
+              var rut = USER.email
               window.localStorage.setItem('rut_paciente', rut);
               $state.go('medicos', {}, {
                 reload: true
@@ -37,8 +41,8 @@ angular.module('saltalacaif')
               // 2 bad password
               // 3 valido
               Movil.userrut({
-                rut: user.email,
-                token: user.pass
+                rut: USER.email,
+                token: USER.pass
               }, function(resp) {
                 if (resp.cod == '2') {
 
@@ -50,13 +54,13 @@ angular.module('saltalacaif')
                 } else {
 
                   //cambio su contraseña por una hasheada
-                  var encrypted = $crypto.encrypt(pass); //encripto la pass
+                  var encrypted = $crypto.encrypt(USER.pass.toString()); //encripto la pass
                   Movil.updatenewpass({ //  y la actualizo en la base de datos cada vez que inicie sesion!
-                    rut: user.email,
+                    rut: USER.email,
                     token: encrypted
                   }, function(res) {
 
-                    rut = user.email
+                    rut = USER.email
                     window.localStorage.setItem('rut_paciente', rut);
                     //ionic loading
                     $state.go('medicos', {}, {
@@ -66,13 +70,14 @@ angular.module('saltalacaif')
                 }
               });
             }
+
           }
         });
 
       } else {
         $scope.invaliditem = true;
-        var mail = user.email
-        firebase.auth().signInWithEmailAndPassword(mail, user.pass).then(function(firebaseUser) {
+        var mail = USER.email
+        firebase.auth().signInWithEmailAndPassword(mail, USER.pass).then(function(firebaseUser) {
 
           var user = firebase.auth().currentUser;
           if (user != null) { //si el usuario existe, su sesion fue valida por lo cual,
@@ -82,7 +87,6 @@ angular.module('saltalacaif')
             }, function(response) {
               if (response.rut == undefined) { //si existe el email que es unico paso al else
 
-                console.log('respuesta nula');
                 var confirm = $mdDialog.prompt()
                   .title('Estamos Mejorando tu experiencia de usuario!.')
                   .textContent('Estimado usuario, Estámos haciendo cambios importantes para mejorar tu experiencia, necesitamos que te vuelvas a registrar.')
@@ -91,22 +95,17 @@ angular.module('saltalacaif')
 
                 $mdDialog.show(confirm).then(function(result) {
                   $scope.registrar()
-                }, function() {
-                  console.log('nada');
-                });
+                }, function() {});
               } else { //por lo cual, inicio sesion perfectamente: y cambio el pass al nuevo
+                var encrypted = $crypto.encrypt(USER.pass.toString()); //encripto la pass
 
-                var encrypted = $crypto.encrypt(pass); //encripto la pass
                 Movil.updatenewpass({ //  y la actualizo en la base de datos cada vez que inicie sesion!
                   rut: response.rut,
                   token: encrypted
                 }, function(res) {
-
-                  rut = response.rut
+                  var rut = response.rut
                   window.localStorage.setItem('rut_paciente', rut);
-                  $state.go('tab.Reserva', {}, {
-                    reload: true
-                  });
+                  $state.go('medicos');
 
                 })
               }
@@ -117,7 +116,6 @@ angular.module('saltalacaif')
         }, function(error) {
           //tenemos "auth/invalid-email" - "auth/user-not-found" - "auth/wrong-password" - "auth/too-many-requests"
           $scope.invalid = true;
-          console.log(error.code)
           var cod = error.code;
           // $scope.invalidmessage = {};
 
@@ -156,7 +154,6 @@ angular.module('saltalacaif')
             rut: result
           }, function(response) {
             var cod = response.cod;
-            console.log('response?', response);
             if (cod == "2") {
               $mdDialog.show(
                 $mdDialog.alert()
@@ -170,12 +167,10 @@ angular.module('saltalacaif')
               );
             } else {
 
-              console.log('rut de respuesta', response.rut);
 
               Movil.Datospaciente({
                 rut_paciente: response.rut
               }, function(res) {
-                console.log('datos del paciente: ', res, 'codigo: ', res.cod);
 
                 if (res.cod == "2") {
                   datosusuario.setData(response);
@@ -200,10 +195,8 @@ angular.module('saltalacaif')
 
           });
         }
-        console.log($scope.status);
       }, function() {
         $scope.status = 'Has cancelado el proceso.';
-        console.log($scope.status);
       });
     };
 
@@ -222,9 +215,7 @@ angular.module('saltalacaif')
       $mdDialog.show(confirm).then(function(result) {
         if (result == undefined) {
           $scope.status = 'no haz ingresado ningun dato.';
-          console.log($scope.status);
         } else {
-          console.log('ejecuto');
           var auth = firebase.auth();
           var emailAddress = result;
 
@@ -255,8 +246,8 @@ angular.module('saltalacaif')
         }
       }, function() {
         $scope.status = 'Has cancelado el proceso.';
-        console.log($scope.status);
       });
 
     }
+
   });
